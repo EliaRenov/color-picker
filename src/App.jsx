@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import './App.css'
 import Colors from './Colors'
+import ClosedLock from './assets/closed-lock.png'
+import OpenLock from './assets/open-lock.png'
 
 function getRandomColor() {
   const keys = Object.keys(Colors);
@@ -8,17 +10,7 @@ function getRandomColor() {
   const randomKey = keys[randomNumber]
   const randomValue = Colors[randomKey]
 
-  return {colorValue: randomKey, colorName: randomValue};
-}
-
-function getXColors(x, prev) {
-  if (typeof x !== 'number' || 1 > x) return console.error('Input must be a positive number')
-
-  let colors = [];
-  for (let i = 0; i < x; i++) {
-    colors.push(getRandomColor())
-  }
-  return colors
+  return {colorValue: randomKey, colorName: randomValue, locked: false};
 }
 
 function componentToHex(c) {
@@ -46,15 +38,49 @@ function decideTextColor(hex) {
   }
 }
 
-function JSXColors(array) {
+function getXColors(x, prev = [{}, {}, {}, {}, {}]) {
+  if (typeof x !== 'number' || 1 > x) return console.error('Input must be a positive number')
+
+  let colors = [];
+  for (let i = 0; i < x; i++) {
+    if (prev[i].locked) {
+      colors.push(prev[i])
+    } else {
+      colors.push(getRandomColor())
+    }
+  }
+  return colors
+}
+
+function toggleColor(e, setColorsState) {
+  const colorName = e.target.getAttribute('color')
+
+    setColorsState(prev => {
+      const index = prev.indexOf(prev.find(x => x.colorName === colorName))
+
+      let newState = [...prev]
+      newState[index].locked = !newState[index].locked
+      
+      return newState
+    })
+
+}
+
+function JSXColors(array, setColorsState) {
   return array.map(color => {
     const { colorValue, colorName } = color
-  
+
     return <div className="color"
-     key={colorValue} 
+     key={colorValue} name={colorName}
      style={{backgroundColor: colorValue}}>
 
       <section className={`color-info ${decideTextColor(colorValue)}`}>
+        
+        {color.locked && 
+          < img className="lock closed-lock" src={ClosedLock} alt="closed lock icon" onClick={(e) => toggleColor(e, setColorsState)} color={colorName} style={{filter: decideTextColor(colorValue) === 'white' && 'invert(1)'}} />}
+        {!color.locked &&
+          <img className="lock open-lock" src={OpenLock} alt="open lock icon" onClick={(e) => toggleColor(e, setColorsState)} color={colorName} style={{filter: decideTextColor(colorValue) === 'white' && 'invert(1)'}} />}
+        
         <h2 className="color-value">
           {colorValue.slice(1)}
         </h2>
@@ -72,7 +98,9 @@ function App() {
   const [colorsNumState, setColorsNumState] = useState(5)
 
   function handleNewColors() {
-    setColorsState(getXColors(colorsNumState))
+    setColorsState((prev) =>
+      getXColors(colorsNumState, prev)
+    )
   }
 
   function handleSpaceInput(e) {
@@ -85,9 +113,11 @@ function App() {
   }
 
   function handleIncrement() {
-    if (colorsNumState === 5) return;
+    if (colorsNumState === 10) return;
     setColorsState(prev => [...prev, getRandomColor()])
   }
+
+  
 
   useEffect(() => {
     setColorsNumState(colorsState.length)
@@ -105,8 +135,8 @@ function App() {
 
 
       </header>
-      <main className="main">
-        {JSXColors(colorsState)}
+      <main className="main" style={{gridTemplateColumns: `repeat(${colorsNumState}, 1fr)`}}>
+        {JSXColors(colorsState, setColorsState)}
       </main>
     </div>
   )

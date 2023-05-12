@@ -24,6 +24,32 @@ body, html, #root, .container {
   width: 200px;
   height: 50px;
   font-size: 1.5rem;
+  color: #ffffff;
+  background-color: black;
+  font-weight: 800;
+  border: 1px solid white;
+
+  border-radius: 5px;
+}
+
+.color-amount-btn {
+  border-radius: 5px;
+  color: #ffffff;
+  background-color: black;
+  border: 1px solid white;
+  font-weight: 800;
+  
+  width: 50px;
+  height: 50px;
+  margin: 20px;
+  font-size: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.color-amount-btn.decrement {
+  font-size: 3rem;
 }
 
 .main {
@@ -34,7 +60,6 @@ body, html, #root, .container {
 
 .main .color {
   background-color: #2a2630;
-  flex-grow: 1;
   text-align: center;
 
   display: grid;
@@ -44,25 +69,29 @@ body, html, #root, .container {
 .main .color .color-info {
   margin-top: -40px;
   grid-row: 2 / 3;
+  width: 100%;
 }
 
 .main .color .color-info .color-value {
-  font-size: 2vw;
+  font-size: 200%;
+  width: 100%;
 }
 
 .main .color .color-info .color-name {
-  font-size: 1vw;
+  font-size: 100%;
+  width: 100%;
 }
 
-.color-amount-btn {
-  width: 60px;
-  height: 60px;
-  margin: 20px;
-  font-size: 2rem;
+.main .color .lock {
+  width: 32px;
 }
 
-.color-amount-btn.decrement {
-  font-size: 3rem;
+.main .color .open-lock {
+  opacity: 0;
+}
+
+.main .color:hover .lock {
+  opacity: 1;
 }
 
 .white {
