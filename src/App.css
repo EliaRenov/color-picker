@@ -53,21 +53,19 @@ body, html, #root, .container {
 }
 
 .main {
-  height: 100%;
+  height: calc(100% - 100px);
   display: grid;
   grid-auto-flow: column;
 }
 
 .main .color {
-  background-color: #2a2630;
   text-align: center;
 
+  transition: opacity 2000ms;
   display: grid;
-  grid-template-rows: 3fr 1fr;
 }
 
 .main .color .color-info {
-  margin-top: -40px;
   grid-row: 2 / 3;
   width: 100%;
 }
@@ -75,6 +73,7 @@ body, html, #root, .container {
 .main .color .color-info .color-value {
   font-size: 200%;
   width: 100%;
+  cursor: grab;
 }
 
 .main .color .color-info .color-name {

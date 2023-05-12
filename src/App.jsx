@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import useWindowSize from './UseWindowSize'
 import './App.css'
 import Colors from './Colors'
 import ClosedLock from './assets/closed-lock.png'
@@ -40,6 +41,7 @@ function decideTextColor(hex) {
 
 function getXColors(x, prev = [{}, {}, {}, {}, {}]) {
   if (typeof x !== 'number' || 1 > x) return console.error('Input must be a positive number')
+  
 
   let colors = [];
   for (let i = 0; i < x; i++) {
@@ -74,14 +76,14 @@ function JSXColors(array, setColorsState) {
      key={colorValue} name={colorName}
      style={{backgroundColor: colorValue}}>
 
-      <section className={`color-info ${decideTextColor(colorValue)}`}>
+      <section className={`color-info ${decideTextColor(colorValue)}`} >
         
         {color.locked && 
           < img className="lock closed-lock" src={ClosedLock} alt="closed lock icon" onClick={(e) => toggleColor(e, setColorsState)} color={colorName} style={{filter: decideTextColor(colorValue) === 'white' && 'invert(1)'}} />}
         {!color.locked &&
           <img className="lock open-lock" src={OpenLock} alt="open lock icon" onClick={(e) => toggleColor(e, setColorsState)} color={colorName} style={{filter: decideTextColor(colorValue) === 'white' && 'invert(1)'}} />}
         
-        <h2 className="color-value">
+        <h2 className="color-value" onClick={() => navigator.clipboard.writeText(colorValue)}>
           {colorValue.slice(1)}
         </h2>
         <h3 className="color-name">
@@ -97,7 +99,13 @@ function App() {
   const [colorsState, setColorsState] = useState(getXColors(5))
   const [colorsNumState, setColorsNumState] = useState(5)
 
+  const size = useWindowSize()
+  const portrait = 'gridTemplateRows'
+  const landscape = 'gridTemplateColumns'
+  const orientation = size.width > size.height ? landscape : portrait
+
   function handleNewColors() {
+
     setColorsState((prev) =>
       getXColors(colorsNumState, prev)
     )
@@ -117,13 +125,9 @@ function App() {
     setColorsState(prev => [...prev, getRandomColor()])
   }
 
-  
-
   useEffect(() => {
     setColorsNumState(colorsState.length)
   }, [colorsState])
-
-
 
   return (
     <div className="container" tabIndex={0} onKeyDown={handleSpaceInput}>
@@ -135,7 +139,7 @@ function App() {
 
 
       </header>
-      <main className="main" style={{gridTemplateColumns: `repeat(${colorsNumState}, 1fr)`}}>
+      <main className="main" style={{[orientation]: `repeat(${colorsNumState}, 1fr)`}}>
         {JSXColors(colorsState, setColorsState)}
       </main>
     </div>
