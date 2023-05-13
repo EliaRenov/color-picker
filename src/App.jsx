@@ -41,7 +41,6 @@ function decideTextColor(hex) {
 
 function getXColors(x, prev = [{}, {}, {}, {}, {}]) {
   if (typeof x !== 'number' || 1 > x) return console.error('Input must be a positive number')
-  
 
   let colors = [];
   for (let i = 0; i < x; i++) {
@@ -68,33 +67,6 @@ function toggleColor(e, setColorsState) {
 
 }
 
-function JSXColors(array, setColorsState) {
-  return array.map(color => {
-    const { colorValue, colorName } = color
-
-    return <div className="color"
-     key={colorValue} name={colorName}
-     style={{backgroundColor: colorValue}}>
-
-      <section className={`color-info ${decideTextColor(colorValue)}`} >
-        
-        {color.locked && 
-          < img className="lock closed-lock" src={ClosedLock} alt="closed lock icon" onClick={(e) => toggleColor(e, setColorsState)} color={colorName} style={{filter: decideTextColor(colorValue) === 'white' && 'invert(1)'}} />}
-        {!color.locked &&
-          <img className="lock open-lock" src={OpenLock} alt="open lock icon" onClick={(e) => toggleColor(e, setColorsState)} color={colorName} style={{filter: decideTextColor(colorValue) === 'white' && 'invert(1)'}} />}
-        
-        <h2 className="color-value" onClick={() => navigator.clipboard.writeText(colorValue)}>
-          {colorValue.slice(1)}
-        </h2>
-        <h3 className="color-name">
-          {colorName}
-        </h3>
-      </section>
-
-    </div>
-  })
-}
-
 function App() {
   const [colorsState, setColorsState] = useState(getXColors(5))
   const [colorsNumState, setColorsNumState] = useState(5)
@@ -103,6 +75,32 @@ function App() {
   const portrait = 'gridTemplateRows'
   const landscape = 'gridTemplateColumns'
   const orientation = size.width > size.height ? landscape : portrait
+
+  const JSXColors = colorsState.map(color => {
+      const { colorValue, colorName } = color
+  
+      return <div className="color"
+       key={colorValue} name={colorName}
+       style={{backgroundColor: colorValue}}>
+  
+        <section className={`color-info ${decideTextColor(colorValue)}`} >
+          
+          {color.locked && 
+            < img className="lock closed-lock" src={ClosedLock} alt="closed lock icon" onClick={(e) => toggleColor(e, setColorsState)} color={colorName} style={{filter: decideTextColor(colorValue) === 'white' && 'invert(1)'}} />}
+          {!color.locked &&
+            <img className="lock open-lock" src={OpenLock} alt="open lock icon" onClick={(e) => toggleColor(e, setColorsState)} color={colorName} style={{filter: decideTextColor(colorValue) === 'white' && 'invert(1)'}} />}
+          
+          <h2 className="color-value" onClick={() => navigator.clipboard.writeText(colorValue)}>
+            {colorValue.slice(1)}
+          </h2>
+          <h3 className="color-name">
+            {colorName}
+          </h3>
+        </section>
+  
+      </div>
+    })
+  
 
   function handleNewColors() {
 
@@ -121,7 +119,7 @@ function App() {
   }
 
   function handleIncrement() {
-    if (colorsNumState === 10) return;
+    if (colorsNumState === 6) return;
     setColorsState(prev => [...prev, getRandomColor()])
   }
 
@@ -137,10 +135,12 @@ function App() {
         <button className="new-colors-btn" onClick={handleNewColors}>Get New Colors</button>
         <button className="color-amount-btn increment" onClick={handleIncrement}>+</button>
 
-
       </header>
+
       <main className="main" style={{[orientation]: `repeat(${colorsNumState}, 1fr)`}}>
-        {JSXColors(colorsState, setColorsState)}
+        {
+        JSXColors
+        }
       </main>
     </div>
   )
